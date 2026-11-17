@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>搜索 · byzh 的笔记本</title>
+<meta name="description" content="站内搜索">
+<script>(function(){try{var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github-dark.min.css">
+
+</head>
+<body>
+<header class="site-head">
+  <a class="brand" href="index.html">byzh 的笔记本</a>
+  <nav>
+    <a href="index.html">文章</a>
+    <a href="categories/index.html">分类</a>
+    <a href="tags/index.html">标签</a>
+    <a href="archives.html">归档</a>
+    <a href="search.html">搜索</a>
+    <a href="about.html">关于</a>
+  </nav>
+  <button class="theme-btn" type="button" title="切换深色模式" aria-label="切换深色模式">🌙</button>
+</header>
+<main>
+<div class="container">
+<h1 class="page-title">搜索</h1>
+<div class="search-box"><input id="q" type="search" class="search-input" placeholder="搜索标题、分类、标签或正文…" autocomplete="off"></div>
+<p id="search-hint" class="search-hint"></p>
+<ul id="search-results" class="post-list"></ul>
+</div>
+</main>
+<footer class="site-foot">
+  <p>© 2026 byzh · <a href="https://byzh31211.github.io">https://byzh31211.github.io</a></p>
+  <p class="built">由 build.py 生成</p>
+</footer>
+<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+<script>if (window.hljs) hljs.highlightAll();</script>
+<script>
+(function () {
+  var root = document.documentElement;
+  var btn  = document.querySelector('.theme-btn');
+  var mq   = window.matchMedia('(prefers-color-scheme: dark)');
+  function current() { return root.getAttribute('data-theme') || (mq.matches ? 'dark' : 'light'); }
+  function paint()   { btn.textContent = current() === 'dark' ? '☀️' : '🌙'; }
+  paint();
+  btn.addEventListener('click', function () {
+    var next = current() === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('theme', next); } catch (e) {}
+    paint();
+  });
+  mq.addEventListener('change', paint);
+})();
+
+(function () {
+  var side = document.querySelector('.toc-side');
+  if (!side) return;
+  var links = [].slice.call(side.querySelectorAll('a[href^="#"]'));
+  if (links.length < 3) return;
+  var map = {}, current = null;
+  links.forEach(function (a) { map[decodeURIComponent(a.hash.slice(1))] = a; });
+  var heads = [].slice.call(document.querySelectorAll('.post h1[id], .post h2[id], .post h3[id]'))
+    .filter(function (h) { return map[h.id]; });
+  if (!heads.length) return;
+  function onScroll() {
+    var found = heads[0];
+    for (var i = 0; i < heads.length; i++) {
+      if (heads[i].getBoundingClientRect().top <= 120) found = heads[i];
+    }
+    if (found === current) return;
+    if (current) current.classList.remove('active');
+    current = found;
+    var a = map[found.id];
+    if (a) a.classList.add('active');
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
+<script>
+(function () {
+  var input = document.getElementById('q');
+  var list  = document.getElementById('search-results');
+  var hint  = document.getElementById('search-hint');
+  var data = null;
+
+  function esc(s) {
+    return String(s).replace(/[&<>"]/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+    });
+  }
+  function snippet(text, q) {
+    var i = text.toLowerCase().indexOf(q);
+    if (i < 0) return text.slice(0, 90);
+    var s = Math.max(0, i - 40);
+    return (s > 0 ? '…' : '') + text.slice(s, i + q.length + 60) + '…';
+  }
+  function run() {
+    if (!data) return;
+    var q = input.value.trim().toLowerCase();
+    list.innerHTML = '';
+    if (!q) {
+      hint.textContent = '共 ' + data.length + ' 篇文章，输入关键词开始搜索';
+      return;
+    }
+    var hits = data.filter(function (p) {
+      return (p.title + ' ' + p.tags.join(' ') + ' ' + p.cats.join(' ') + ' ' + p.text)
+        .toLowerCase().indexOf(q) >= 0;
+    });
+    hint.textContent = hits.length ? ('找到 ' + hits.length + ' 篇') : '没有匹配的文章';
+    hits.slice(0, 40).forEach(function (p) {
+      var li = document.createElement('li');
+      li.innerHTML =
+        '<a class="row" href="' + p.url + '">' +
+          '<time>' + p.date + '</time>' +
+          '<span class="ptitle">' + esc(p.title) + '</span>' +
+        '</a>' +
+        '<span class="li-meta">' + esc(snippet(p.text, q)) + '</span>';
+      list.appendChild(li);
+    });
+  }
+  fetch('index.json')
+    .then(function (r) { return r.json(); })
+    .then(function (d) { data = d; run(); })
+    .catch(function () {
+      hint.textContent = '索引加载失败。请用 http:// 访问（本地预览：python -m http.server 8765）';
+    });
+  input.addEventListener('input', run);
+})();
+</script>
+</body>
+</html>

@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>[AI工具从入门到入土] matplotlib 🎨 · byzh 的笔记本</title>
 <meta name="description" content="[AI工具从入门到入土] matplotlib 🎨">
+<script>(function(){try{var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
 <link rel="stylesheet" href="../style.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github-dark.min.css">
 
@@ -14,52 +15,47 @@
   <a class="brand" href="../index.html">byzh 的笔记本</a>
   <nav>
     <a href="../index.html">文章</a>
+    <a href="../categories/index.html">分类</a>
+    <a href="../tags/index.html">标签</a>
+    <a href="../archives.html">归档</a>
+    <a href="../search.html">搜索</a>
     <a href="../about.html">关于</a>
   </nav>
+  <button class="theme-btn" type="button" title="切换深色模式" aria-label="切换深色模式">🌙</button>
 </header>
 <main>
+<div class="post-wrap has-toc">
+<div class="post-main">
 <article class="post">
 <h1>[AI工具从入门到入土] matplotlib 🎨</h1>
-<p class="meta"><time datetime="2026-05-17">2026-05-17</time> · <span class="cat">AI工具从入门到入土</span></p>
+<p class="meta"><time datetime="2026-05-17">2026-05-17</time> · 3627 字 · 约 9 分钟 · <a class="cat" href="../categories/AI%E5%B7%A5%E5%85%B7%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%85%A5%E5%9C%9F.html">AI工具从入门到入土</a></p>
+<details class="toc-mobile">
+<summary>目录</summary>
+<div class="toc">
+<ul>
+<li><a href="#ai-matplotlib">[AI工具从入门到入土] matplotlib🎨</a></li>
+<li><a href="#_1">个人导航</a></li>
+<li><a href="#_2">📌规范</a></li>
+<li><a href="#_3">⚙️导入</a></li>
+<li><a href="#_4">⚙️全局设置</a></li>
+<li><a href="#_5">🖼画布</a></li>
+<li><a href="#_6">基础细节</a></li>
+<li><a href="#_7">文本</a></li>
+<li><a href="#_8">线条</a></li>
+<li><a href="#_9">保存</a></li>
+<li><a href="#-ax">拓展 - ax</a></li>
+<li><a href="#-legend">拓展 - 修改已有legend</a></li>
+<li><a href="#-">拓展 - 排版</a></li>
+</ul>
+</div>
+
+</details>
 <h1 id="ai-matplotlib">[AI工具从入门到入土] matplotlib🎨</h1>
 <h1 id="_1">个人导航</h1>
 <p>知乎：https://www.zhihu.com/people/byzh_rc</p>
 <p>CSDN：https://blog.csdn.net/qq_54636039</p>
 <p>注：本文仅对所述内容做了框架性引导，具体细节可查询其余相关资料or源码</p>
 <p>参考文章：各方资料</p>
-<div class="toc"><span class="toctitle">目录</span><ul>
-<li><a href="#ai-matplotlib">[AI工具从入门到入土] matplotlib🎨</a></li>
-<li><a href="#_1">个人导航</a></li>
-<li><a href="#_2">📌规范</a><ul>
-<li><a href="#1-plt">1. plt方式</a></li>
-<li><a href="#2-ax">2. ax方式</a></li>
-</ul>
-</li>
-<li><a href="#_3">⚙️导入</a></li>
-<li><a href="#_4">⚙️全局设置</a></li>
-<li><a href="#_5">🖼画布</a></li>
-<li><a href="#_6">基础细节</a><ul>
-<li><a href="#1">1. 标题</a></li>
-<li><a href="#2">2. 图例</a></li>
-<li><a href="#3">3. 坐标轴标签</a></li>
-<li><a href="#4">4. 坐标轴刻度</a></li>
-<li><a href="#5">5. 边框</a></li>
-<li><a href="#6">6. 网格线</a></li>
-</ul>
-</li>
-<li><a href="#_7">文本</a></li>
-<li><a href="#_8">线条</a></li>
-<li><a href="#_9">保存</a></li>
-<li><a href="#-ax">拓展 - ax</a><ul>
-<li><a href="#1-y">1. 双y轴(右轴)</a></li>
-<li><a href="#2-y">2. y轴反转</a></li>
-<li><a href="#3-x">3. x轴移到上分</a></li>
-</ul>
-</li>
-<li><a href="#-legend">拓展 - 修改已有legend</a></li>
-<li><a href="#-">拓展 - 排版</a></li>
-</ul>
-</div>
 <h1 id="_2">📌规范</h1>
 <h4 id="1-plt">1. <code>plt</code>方式</h4>
 <p>全局级 -&gt; 直接作用于当前图标</p>
@@ -239,7 +235,29 @@ for text in leg.get_texts():
 </ul>
 <p><strong>-&gt; 推荐使用 <code>constrained_layout=True</code> 加 <code>bbox_inches='tight'</code></strong></p>
 </article>
-<p class="back"><a href="../index.html">← 返回首页</a></p>
+<p class="back"><a href="../index.html">← 返回首页</a></p></div>
+<aside class="toc-side">
+<p class="toc-title">目录</p>
+<div class="toc">
+<ul>
+<li><a href="#ai-matplotlib">[AI工具从入门到入土] matplotlib🎨</a></li>
+<li><a href="#_1">个人导航</a></li>
+<li><a href="#_2">📌规范</a></li>
+<li><a href="#_3">⚙️导入</a></li>
+<li><a href="#_4">⚙️全局设置</a></li>
+<li><a href="#_5">🖼画布</a></li>
+<li><a href="#_6">基础细节</a></li>
+<li><a href="#_7">文本</a></li>
+<li><a href="#_8">线条</a></li>
+<li><a href="#_9">保存</a></li>
+<li><a href="#-ax">拓展 - ax</a></li>
+<li><a href="#-legend">拓展 - 修改已有legend</a></li>
+<li><a href="#-">拓展 - 排版</a></li>
+</ul>
+</div>
+
+</aside>
+</div>
 </main>
 <footer class="site-foot">
   <p>© 2026 byzh · <a href="https://byzh31211.github.io">https://byzh31211.github.io</a></p>
@@ -247,6 +265,47 @@ for text in leg.get_texts():
 </footer>
 <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
 <script>if (window.hljs) hljs.highlightAll();</script>
+<script>
+(function () {
+  var root = document.documentElement;
+  var btn  = document.querySelector('.theme-btn');
+  var mq   = window.matchMedia('(prefers-color-scheme: dark)');
+  function current() { return root.getAttribute('data-theme') || (mq.matches ? 'dark' : 'light'); }
+  function paint()   { btn.textContent = current() === 'dark' ? '☀️' : '🌙'; }
+  paint();
+  btn.addEventListener('click', function () {
+    var next = current() === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('theme', next); } catch (e) {}
+    paint();
+  });
+  mq.addEventListener('change', paint);
+})();
 
+(function () {
+  var side = document.querySelector('.toc-side');
+  if (!side) return;
+  var links = [].slice.call(side.querySelectorAll('a[href^="#"]'));
+  if (links.length < 3) return;
+  var map = {}, current = null;
+  links.forEach(function (a) { map[decodeURIComponent(a.hash.slice(1))] = a; });
+  var heads = [].slice.call(document.querySelectorAll('.post h1[id], .post h2[id], .post h3[id]'))
+    .filter(function (h) { return map[h.id]; });
+  if (!heads.length) return;
+  function onScroll() {
+    var found = heads[0];
+    for (var i = 0; i < heads.length; i++) {
+      if (heads[i].getBoundingClientRect().top <= 120) found = heads[i];
+    }
+    if (found === current) return;
+    if (current) current.classList.remove('active');
+    current = found;
+    var a = map[found.id];
+    if (a) a.classList.add('active');
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
 </body>
 </html>

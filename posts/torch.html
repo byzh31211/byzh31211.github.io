@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>[AI工具从入门到入土] torch · byzh 的笔记本</title>
 <meta name="description" content="[AI工具从入门到入土] torch">
+<script>(function(){try{var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
 <link rel="stylesheet" href="../style.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github-dark.min.css">
 
@@ -14,13 +15,20 @@
   <a class="brand" href="../index.html">byzh 的笔记本</a>
   <nav>
     <a href="../index.html">文章</a>
+    <a href="../categories/index.html">分类</a>
+    <a href="../tags/index.html">标签</a>
+    <a href="../archives.html">归档</a>
+    <a href="../search.html">搜索</a>
     <a href="../about.html">关于</a>
   </nav>
+  <button class="theme-btn" type="button" title="切换深色模式" aria-label="切换深色模式">🌙</button>
 </header>
 <main>
+<div class="post-wrap">
+<div class="post-main">
 <article class="post">
 <h1>[AI工具从入门到入土] torch</h1>
-<p class="meta"><time datetime="2026-05-17">2026-05-17</time> · <span class="cat">AI工具从入门到入土</span></p>
+<p class="meta"><time datetime="2026-05-17">2026-05-17</time> · 197 字 · 约 1 分钟 · <a class="cat" href="../categories/AI%E5%B7%A5%E5%85%B7%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%85%A5%E5%9C%9F.html">AI工具从入门到入土</a></p>
 <h1 id="torchcat">torch.cat</h1>
 <p><strong>在已有维度上堆叠</strong></p>
 <p>张量(2, 10) 和 张量(2, 10)</p>
@@ -31,7 +39,8 @@
 <p>张量(10,) 和 张量(10,)</p>
 <p>-&gt; 张量(2, 10): 称为沿第一个维度(axis/dim = 0)堆叠</p>
 </article>
-<p class="back"><a href="../index.html">← 返回首页</a></p>
+<p class="back"><a href="../index.html">← 返回首页</a></p></div>
+</div>
 </main>
 <footer class="site-foot">
   <p>© 2026 byzh · <a href="https://byzh31211.github.io">https://byzh31211.github.io</a></p>
@@ -39,6 +48,47 @@
 </footer>
 <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
 <script>if (window.hljs) hljs.highlightAll();</script>
+<script>
+(function () {
+  var root = document.documentElement;
+  var btn  = document.querySelector('.theme-btn');
+  var mq   = window.matchMedia('(prefers-color-scheme: dark)');
+  function current() { return root.getAttribute('data-theme') || (mq.matches ? 'dark' : 'light'); }
+  function paint()   { btn.textContent = current() === 'dark' ? '☀️' : '🌙'; }
+  paint();
+  btn.addEventListener('click', function () {
+    var next = current() === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('theme', next); } catch (e) {}
+    paint();
+  });
+  mq.addEventListener('change', paint);
+})();
 
+(function () {
+  var side = document.querySelector('.toc-side');
+  if (!side) return;
+  var links = [].slice.call(side.querySelectorAll('a[href^="#"]'));
+  if (links.length < 3) return;
+  var map = {}, current = null;
+  links.forEach(function (a) { map[decodeURIComponent(a.hash.slice(1))] = a; });
+  var heads = [].slice.call(document.querySelectorAll('.post h1[id], .post h2[id], .post h3[id]'))
+    .filter(function (h) { return map[h.id]; });
+  if (!heads.length) return;
+  function onScroll() {
+    var found = heads[0];
+    for (var i = 0; i < heads.length; i++) {
+      if (heads[i].getBoundingClientRect().top <= 120) found = heads[i];
+    }
+    if (found === current) return;
+    if (current) current.classList.remove('active');
+    current = found;
+    var a = map[found.id];
+    if (a) a.classList.add('active');
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
 </body>
 </html>
