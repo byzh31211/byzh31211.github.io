@@ -10,6 +10,7 @@
 """
 
 import html
+import hashlib
 import json
 import re
 import shutil
@@ -17,7 +18,7 @@ import sys
 import tomllib
 from datetime import datetime
 from pathlib import Path
-from urllib.parse import quote, unquote
+from urllib.parse import unquote
 
 import markdown
 
@@ -39,6 +40,11 @@ ABOUT_MD = """
 - 环境：Python / PyTorch / Docker
 - 站点：纯静态 HTML，`build.py` 编译，GitHub Pages 托管
 """
+
+TERM_SLUGS = {
+    # 分类 / 标签的中文名 -> URL 里的英文名（不配置的话自动用 t-xxxxxxxx.html）
+    "AI工具从入门到入土": "ai-tools",
+}
 
 # CDN 资源（想换镜像改这里）
 HIGHLIGHT_JS  = "https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"
@@ -196,8 +202,17 @@ def parse_date(value) -> datetime:
 
 
 def u(name: str) -> str:
-    """中文文件名 -> URL 编码。"""
-    return quote(str(name))
+    """分类/标签名 -> URL 里用的 ASCII 文件名（避免中文路径被浏览器按 GBK 编码）。"""
+    name = str(name)
+    if name in TERM_SLUGS:
+        return TERM_SLUGS[name]
+    if re.fullmatch(r"[A-Za-z0-9._-]+", name):
+        slug = name.lower()
+    else:
+        slug = "t-" + hashlib.md5(name.encode("utf-8")).hexdigest()[:8]
+    if slug in ("index", "posts", "categories", "tags"):
+        slug += "-1"
+    return slug
 
 
 def read_minutes(words: int) -> int:
@@ -228,6 +243,17 @@ def render_page(*, title, desc, main, depth, year,
 def write(path: Path, content: str):
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(content, encoding="utf-8")
+
+
+def redirect_page(target: str) -> str:
+    """旧地址（中文文件名）-> 新地址的跳转页，兼容缓存里的老链接。"""
+    return (
+        '<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">'
+        f'<meta http-equiv="refresh" content="0; url={target}">'
+        f'<link rel="canonical" href="{target}">'
+        "<title>跳转中…</title></head><body>"
+        f'<p>正在跳转到 <a href="{target}">{target}</a>…</p></body></html>'
+    )
 
 
 # ───────────────────────── 片段渲染 ─────────────────────────
@@ -437,7 +463,7 @@ def build_categories(cats, year):
     ))
 
     for name, items in cats:
-        write(CAT_DIR / f"{name}.html", render_page(
+        write(CAT_DIR / f"{u(name)}.html", render_page(
             title=f"分类：{name} · {SITE_TITLE}",
             desc=f"{name} 分类下的全部文章",
             main=(
@@ -449,7 +475,9 @@ def build_categories(cats, year):
             ),
             depth=1, year=year,
         ))
-        print(f"  [分类] categories/{name}.html")
+        print(f"  [分类] categories/{u(name)}.html")
+        if name != u(name):
+            write(CAT_DIR / f"{name}.html", redirect_page(f"{u(name)}.html"))
 
 
 def build_tags(tags, year):
@@ -473,7 +501,7 @@ def build_tags(tags, year):
     ))
 
     for name, items in tags:
-        write(TAG_DIR / f"{name}.html", render_page(
+        write(TAG_DIR / f"{u(name)}.html", render_page(
             title=f"标签：{name} · {SITE_TITLE}",
             desc=f"标签 {name} 下的全部文章",
             main=(
@@ -485,7 +513,9 @@ def build_tags(tags, year):
             ),
             depth=1, year=year,
         ))
-        print(f"  [标签] tags/{name}.html")
+        print(f"  [标签] tags/{u(name)}.html")
+        if name != u(name):
+            write(TAG_DIR / f"{name}.html", redirect_page(f"{u(name)}.html"))
 
 
 def build_archives(posts, year):
@@ -660,6 +690,11 @@ def main():
 
     cats = sorted(cat_map.items(), key=lambda kv: (-len(kv[1]), kv[0]))
     tags = sorted(tag_map.items(), key=lambda kv: (-len(kv[1]), kv[0]))
+
+    for name, _ in cats + tags:
+        if name not in TERM_SLUGS and not re.fullmatch(r"[A-Za-z0-9._-]+", name):
+            print(f'  [提示] 「{name}」没有配英文 URL 名，已用 {u(name)}.html'
+                  f'（可在 build.py 的 TERM_SLUGS 里配一个好看的）')
 
     print("==> 生成页面")
     for p in posts:

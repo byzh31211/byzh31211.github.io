@@ -48,6 +48,23 @@ tags = ["docker", "容器"]
 
 **分类和标签不用登记**，写了就会自动出现；删掉最后一个引用后页面也会自动消失。
 
+页面 URL 用的文件名规则（`build.py` 的 `TERM_SLUGS`）：
+
+| 分类/标签名 | 生成的文件 |
+|---|---|
+| `docker`、`python` | `tags/docker.html`、`tags/python.html`（纯英文直接用） |
+| `AI工具从入门到入土` | `categories/ai-tools.html`（在 `TERM_SLUGS` 里配了英文名） |
+| `容器`（没配） | `tags/t-1a2b3c4d.html`（自动 md5，编译时会提示） |
+
+**为什么不用中文文件名**：部分浏览器会把中文路径按 GBK 编码发出去，导致 404。用 ASCII 文件名可以彻底避免。给中文分类配一个英文名的写法：
+
+```python
+TERM_SLUGS = {
+    "AI工具从入门到入土": "ai-tools",
+    "容器": "container",
+}
+```
+
 发布：
 
 ```powershell
