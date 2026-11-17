@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>[AI工具从入门到入土] docker · byzh 的笔记本</title>
+<meta name="description" content="[AI工具从入门到入土] docker">
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github-dark.min.css">
+
+</head>
+<body>
+<header class="site-head">
+  <a class="brand" href="../index.html">byzh 的笔记本</a>
+  <nav>
+    <a href="../index.html">文章</a>
+    <a href="../about.html">关于</a>
+  </nav>
+</header>
+<main>
+<article class="post">
+<h1>[AI工具从入门到入土] docker</h1>
+<p class="meta"><time datetime="2026-05-17">2026-05-17</time> · <span class="cat">AI工具从入门到入土</span></p>
+<h1 id="_1">基本命令</h1>
+<pre><code># 设置开机启动docker
+systemctl enable docker
+# 重启docker
+systemctl restart docker
+# 镜像:
+docker images
+docker search xxx
+docker pull xxx
+docker rmi xxx
+# 容器:
+docker run -it --name XXX (-v ...:...) xxx:5.0 /bin/bash
+docker run -id --name XXX (-v ...:...) xxx:5.0 /bin/bash
+docker exec -it XXX /bin/bash
+exit
+docker start XXX
+docker ps # 当前容器
+docker ps -a # 所有容器
+docker stop XXX
+docker rm XXX
+# 加载镜像
+docker commit 容器id 镜像名称:版本号
+docker save -o 压缩文件名.tar 镜像名称:版本号
+docker load -i 压缩文件
+# 根据Dockerfile来构建镜像
+docker build -f ./Dockerfile -t xxx:1.0 . # .代表寻址的路
+</code></pre>
+<h1 id="_2">创建容器</h1>
+<pre><code>docker run -id --gpus all --name SY311 -v /home/qsun/桌面/SY:/root/SY sy311:4.0 /bin/bash
+</code></pre>
+<p>$$
+\text{
+docker run -id --gpus all --name SY311 -v \color{red}/home/qsun/桌面/SY\color{black}:\color{green}/root/SY \color{purple}sy311:4.0 \color{black}/bin/bash
+}
+\
+\begin{cases}
+\color{red}外部主设备的项目文件夹路径(需要提前准备好)
+\
+\color{green}容器内部的对应文件夹目录(会自动创建)
+\
+\color{purple}镜像名与其对应版本
+\end{cases}
+$$</p>
+<blockquote>
+<p>当创建容器后, 红色文件夹(实际存在) 与 绿色文件夹(容器内存在) 会关联起来
+-&gt; 修改主机内实际存在的文件夹, 则容器内的该文件夹也会变</p>
+</blockquote>
+<h1 id="dockerfile">Dockerfile</h1>
+<p><a href="https://hub.docker.com/layers/pytorch/pytorch/2.3.1-cuda12.1-cudnn8-devel/images/sha256-a22a1fca37f8361c8a1e859cd6eb6bd9d1fb384f9c0dcb2cfc691a178eb03d17">Image Layer Details - pytorch/pytorch:2.3.1-cuda12.1-cudnn8-devel</a></p>
+<p><a href="https://hub.docker.com/layers/pytorch/pytorch/2.3.1-cuda11.8-cudnn8-devel/images/sha256-5c2e1d0bbe0f000b12aef0dfba9980790c1240d40498a9f67d01bd2bfc131461">Image Layer Details - pytorch/pytorch:2.3.1-cuda11.8-cudnn8-devel</a></p>
+<p><code>Dockerfile</code>:</p>
+<pre><code>FROM pytorch/pytorch:2.3.1-cuda11.8-cudnn8-devel
+
+WORKDIR /workspace
+
+RUN pip install --no-cache-dir --retries 5 --timeout 120 \
+    numpy==1.26.4 \
+    pandas==2.1.4 \
+    matplotlib==3.9.4 \
+    scikit-learn==1.6.1 \
+    spikingjelly==0.0.0.0.14 \
+    thop \
+    -i https://pypi.tuna.tsinghua.edu.cn/simple
+
+CMD [&quot;/bin/bash&quot;]
+</code></pre>
+<blockquote>
+<p><code>touch Dockerfile</code></p>
+</blockquote>
+<p>根据Dockerfile来构建镜像:</p>
+<pre><code>docker build -f ./Dockerfile -t xxx:1.0 .
+</code></pre>
+</article>
+<p class="back"><a href="../index.html">← 返回首页</a></p>
+</main>
+<footer class="site-foot">
+  <p>© 2026 byzh · <a href="https://byzh31211.github.io">https://byzh31211.github.io</a></p>
+  <p class="built">由 build.py 生成</p>
+</footer>
+<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+<script>if (window.hljs) hljs.highlightAll();</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-svg.js"></script>
+</body>
+</html>

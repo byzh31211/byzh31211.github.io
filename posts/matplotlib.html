@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>[AI工具从入门到入土] matplotlib 🎨 · byzh 的笔记本</title>
+<meta name="description" content="[AI工具从入门到入土] matplotlib 🎨">
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github-dark.min.css">
+
+</head>
+<body>
+<header class="site-head">
+  <a class="brand" href="../index.html">byzh 的笔记本</a>
+  <nav>
+    <a href="../index.html">文章</a>
+    <a href="../about.html">关于</a>
+  </nav>
+</header>
+<main>
+<article class="post">
+<h1>[AI工具从入门到入土] matplotlib 🎨</h1>
+<p class="meta"><time datetime="2026-05-17">2026-05-17</time> · <span class="cat">AI工具从入门到入土</span></p>
+<h1 id="ai-matplotlib">[AI工具从入门到入土] matplotlib🎨</h1>
+<h1 id="_1">个人导航</h1>
+<p>知乎：https://www.zhihu.com/people/byzh_rc</p>
+<p>CSDN：https://blog.csdn.net/qq_54636039</p>
+<p>注：本文仅对所述内容做了框架性引导，具体细节可查询其余相关资料or源码</p>
+<p>参考文章：各方资料</p>
+<div class="toc"><span class="toctitle">目录</span><ul>
+<li><a href="#ai-matplotlib">[AI工具从入门到入土] matplotlib🎨</a></li>
+<li><a href="#_1">个人导航</a></li>
+<li><a href="#_2">📌规范</a><ul>
+<li><a href="#1-plt">1. plt方式</a></li>
+<li><a href="#2-ax">2. ax方式</a></li>
+</ul>
+</li>
+<li><a href="#_3">⚙️导入</a></li>
+<li><a href="#_4">⚙️全局设置</a></li>
+<li><a href="#_5">🖼画布</a></li>
+<li><a href="#_6">基础细节</a><ul>
+<li><a href="#1">1. 标题</a></li>
+<li><a href="#2">2. 图例</a></li>
+<li><a href="#3">3. 坐标轴标签</a></li>
+<li><a href="#4">4. 坐标轴刻度</a></li>
+<li><a href="#5">5. 边框</a></li>
+<li><a href="#6">6. 网格线</a></li>
+</ul>
+</li>
+<li><a href="#_7">文本</a></li>
+<li><a href="#_8">线条</a></li>
+<li><a href="#_9">保存</a></li>
+<li><a href="#-ax">拓展 - ax</a><ul>
+<li><a href="#1-y">1. 双y轴(右轴)</a></li>
+<li><a href="#2-y">2. y轴反转</a></li>
+<li><a href="#3-x">3. x轴移到上分</a></li>
+</ul>
+</li>
+<li><a href="#-legend">拓展 - 修改已有legend</a></li>
+<li><a href="#-">拓展 - 排版</a></li>
+</ul>
+</div>
+<h1 id="_2">📌规范</h1>
+<h4 id="1-plt">1. <code>plt</code>方式</h4>
+<p>全局级 -&gt; 直接作用于当前图标</p>
+<h4 id="2-ax">2. <code>ax</code>方式</h4>
+<p>对象级 -&gt; 精准作用于指定对象</p>
+<h1 id="_3">⚙️导入</h1>
+<pre><code class="language-py">import matplotlib.pyplot as plt
+from matplotlib.axes import Axes # 为ax提供类型提示
+
+# 正常显示中文和负号
+plt.rcParams['font.sans-serif'] = ['SimHei', 'Kaiti', 'Microsoft YaHei']  
+plt.rcParams['axes.unicode_minus'] = False
+</code></pre>
+<h1 id="_4">⚙️全局设置</h1>
+<pre><code class="language-py">plt.rcParams['font.size'] = 12       # 默认字体大小
+plt.rcParams['axes.titlesize'] = 14  # 标题字体大小
+plt.rcParams['axes.labelsize'] = 12  # 坐标轴标签字体大小
+plt.rcParams['xtick.labelsize'] = 10 # x轴刻度字体大小
+plt.rcParams['ytick.labelsize'] = 10 # y轴刻度字体大小
+plt.rcParams['legend.fontsize'] = 10 # 图例字体大小
+</code></pre>
+<h1 id="_5">🖼画布</h1>
+<p>常用:</p>
+<pre><code class="language-py">plt.figure(figsize=(12, 6))
+</code></pre>
+<p>单图:</p>
+<pre><code class="language-py"># 麻烦
+fig = plt.figure(figsize=(12, 6))
+ax = plt.gca() # get current axes
+</code></pre>
+<pre><code class="language-py"># 不推荐
+fig = plt.figure(figsize=(12, 6))
+ax = fig.add_subplot(111) # 1行1列第1个子图
+</code></pre>
+<pre><code class="language-py"># 推荐
+fig, ax = plt.subplots(figsize=(12, 6))
+</code></pre>
+<p>多图:</p>
+<pre><code class="language-py">fig, axs = plt.subplots(nrows=2, ncols=1, figsize=(12, 6), constrained_layout=True)
+</code></pre>
+<blockquote>
+<p>对于多图, 还可使用 <code>axs = axs.flatten()</code></p>
+</blockquote>
+<h1 id="_6">基础细节</h1>
+<h4 id="1">1. 标题</h4>
+<pre><code class="language-py">plt.title('xxx', fontsize=16, pad=20, fontweight='bold')
+</code></pre>
+<pre><code class="language-py">ax.set_title('xxx', fontsize=16, pad=20, fontweight='bold')
+</code></pre>
+<h4 id="2">2. 图例</h4>
+<pre><code class="language-py">plt.legend(fontsize=17, loc='upper right')
+plt.legend(fontsize=17, loc='lower left')
+</code></pre>
+<pre><code class="language-py">ax.legend(fontsize=17, loc='upper right')
+ax.legend(fontsize=17, loc='lower left')
+</code></pre>
+<h4 id="3">3. 坐标轴标签</h4>
+<pre><code class="language-py">plt.xlabel('xxx', fontsize=17, labelpad=10)
+plt.ylabel('xxx', fontsize=17, labelpad=10)
+</code></pre>
+<pre><code class="language-py">ax.set_xlabel('xxx', fontsize=17, labelpad=10) 
+ax.set_ylabel('xxx', fontsize=17, labelpad=10)
+</code></pre>
+<h4 id="4">4. 坐标轴刻度</h4>
+<pre><code class="language-py">plt.xticks([0, 1, 2, 3], ['cat', 'dog', 'bird', 'mouse'], fontsize=17)
+plt.yticks([10, 20, 30], ['low', 'mid', 'high'], fontsize=17)
+</code></pre>
+<pre><code class="language-py"># 只在哪些位置显示刻度
+ax.set_xticks([0, 1, 2, 3])
+ax.set_yticks([10, 20, 30])
+# 刻度显示的文本
+ax.set_xticklabels(['cat', 'dog', 'bird', 'mouse'], fontsize=17)
+ax.set_yticklabels(['low', 'mid', 'high'], fontsize=17)
+# 更多样式设置
+ax.tick_params(axis='x', labelsize=17)
+ax.tick_params(axis='y', labelsize=17)
+</code></pre>
+<h4 id="5">5. 边框</h4>
+<pre><code class="language-py">ax = plt.gca()
+ax.spines['right'].set_visible(False)
+ax.spines['left'].set_visible(False)
+ax.spines['top'].set_visible(False)
+ax.spines['bottom'].set_visible(False)
+</code></pre>
+<h4 id="6">6. 网格线</h4>
+<pre><code class="language-py">plt.grid(axis='x', linestyle='--', alpha=0.7, color='gray')
+plt.grid(axis='y', linestyle='--', alpha=0.7, color='gray')
+</code></pre>
+<pre><code class="language-py">ax.grid(axis='x', linestyle='--', alpha=0.7, color='gray')
+ax.grid(axis='y', linestyle='--', alpha=0.7, color='gray')
+</code></pre>
+<h1 id="_7">文本</h1>
+<pre><code class="language-py">plt.text(
+    0.5, 0.5, 'xxx',
+    ha='center', va='center',
+    fontsize=14, fontweight='bold', color='#555555',
+    transform=plt.gca().transAxes
+)
+</code></pre>
+<pre><code class="language-py">ax.text(
+    0.5, 0.5, 'xxx',
+    ha='center', va='center',
+    fontsize=14, fontweight='bold', color='#555555',
+    transform=plt.gca().transAxes
+)
+</code></pre>
+<h1 id="_8">线条</h1>
+<pre><code class="language-py">plt.axhline(0.5, color='red', linestyle='--', label='xxx')
+plt.axvline(0.5, color='red', linestyle='--', label='xxx')
+</code></pre>
+<pre><code class="language-py">ax.axhline(0.5, color='red', linestyle='--', label='xxx')
+ax.axvline(0.5, color='red', linestyle='--', label='xxx')
+</code></pre>
+<h1 id="_9">保存</h1>
+<pre><code class="language-py">plt.savefig(&quot;fig.png&quot;, dpi=300, bbox_inches='tight')
+plt.close()
+</code></pre>
+<h1 id="-ax">拓展 - ax</h1>
+<h4 id="1-y">1. 双y轴(右轴)</h4>
+<p>在同一个图上，创建一个共享 x 轴、但拥有独立 y 轴的第二个坐标系</p>
+<pre><code class="language-py">ax_right = ax.twinx()
+</code></pre>
+<h4 id="2-y">2. y轴反转</h4>
+<pre><code class="language-py">ax.invert_yaxis()
+</code></pre>
+<h4 id="3-x">3. x轴移到上分</h4>
+<pre><code class="language-py">ax.xaxis.tick_top()
+ax.xaxis.set_label_position('top')
+</code></pre>
+<h1 id="-legend">拓展 - 修改已有legend</h1>
+<pre><code class="language-py">leg = ax.get_legend()
+
+leg.set_frame_on(False)
+for text in leg.get_texts():
+    text.set_fontsize(17)
+</code></pre>
+<h1 id="-">拓展 - 排版</h1>
+<table>
+<thead>
+<tr>
+<th>名字</th>
+<th>作用阶段</th>
+<th>作用对象</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>constrained_layout=True</code></td>
+<td>🟢 创建时</td>
+<td>整个布局系统</td>
+</tr>
+<tr>
+<td><code>tight_layout()</code></td>
+<td>🟡 绘图后</td>
+<td>子图之间间距</td>
+</tr>
+<tr>
+<td><code>bbox_inches='tight'</code></td>
+<td>🔵 保存时</td>
+<td>图片裁剪</td>
+</tr>
+</tbody>
+</table>
+<p><code>constrained_layout=True</code>: <strong>新方案</strong>(智能布局引擎)</p>
+<ul>
+<li>避免标题重叠, 避免 label 重叠, 避免 legend 挤压</li>
+</ul>
+<p><code>tight_layout()</code>: <strong>老方案</strong></p>
+<ul>
+<li>调整子图间距, 避免基本重叠</li>
+<li>对 legend / colorbar 支持差, 有时会“挤坏布局”</li>
+</ul>
+<p><code>bbox_inches='tight'</code>: </p>
+<ul>
+<li>去掉外围空白</li>
+<li>裁剪成“刚好包住内容”</li>
+</ul>
+<p><strong>-&gt; 推荐使用 <code>constrained_layout=True</code> 加 <code>bbox_inches='tight'</code></strong></p>
+</article>
+<p class="back"><a href="../index.html">← 返回首页</a></p>
+</main>
+<footer class="site-foot">
+  <p>© 2026 byzh · <a href="https://byzh31211.github.io">https://byzh31211.github.io</a></p>
+  <p class="built">由 build.py 生成</p>
+</footer>
+<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+<script>if (window.hljs) hljs.highlightAll();</script>
+
+</body>
+</html>

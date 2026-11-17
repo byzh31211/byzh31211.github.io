@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>[AI工具从入门到入土] venv、pip、conda、uv一次讲清 · byzh 的笔记本</title>
+<meta name="description" content="[AI工具从入门到入土] venv、pip、conda、uv一次讲清">
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github-dark.min.css">
+
+</head>
+<body>
+<header class="site-head">
+  <a class="brand" href="../index.html">byzh 的笔记本</a>
+  <nav>
+    <a href="../index.html">文章</a>
+    <a href="../about.html">关于</a>
+  </nav>
+</header>
+<main>
+<article class="post">
+<h1>[AI工具从入门到入土] venv、pip、conda、uv一次讲清</h1>
+<p class="meta"><time datetime="2026-05-17">2026-05-17</time> · <span class="cat">AI工具从入门到入土</span></p>
+<h1 id="python-venvpipcondauv">[Python-环境] venv、pip、conda、uv一次讲清</h1>
+<h2 id="_1">个人导航</h2>
+<p>知乎：https://www.zhihu.com/people/byzh_rc</p>
+<p>CSDN：https://blog.csdn.net/qq_54636039</p>
+<p>注：本文仅对所述内容做了框架性引导，具体细节可查询其余相关资料or源码</p>
+<p>参考文章：各方资料</p>
+<div class="toc"><span class="toctitle">目录</span><ul>
+<li><a href="#python-venvpipcondauv">[Python-环境] venv、pip、conda、uv一次讲清</a><ul>
+<li><a href="#_1">个人导航</a></li>
+<li><a href="#pythonvenv">🚲Python官方虚拟环境venv</a><ul>
+<li><a href="#1">1. 创建环境</a></li>
+<li><a href="#2">2. 激活环境</a></li>
+<li><a href="#3">3. 退出环境</a></li>
+<li><a href="#3_1">3. 安装包</a></li>
+<li><a href="#4">4. 其他常用命令</a></li>
+<li><a href="#5-pip">5. 修改pip清华源</a></li>
+<li><a href="#6-whl">6. 本地化whl</a></li>
+</ul>
+</li>
+<li><a href="#conda">🚗Conda</a><ul>
+<li><a href="#1_1">1. 基础配置</a></li>
+<li><a href="#2_1">2. 基础命令</a></li>
+</ul>
+</li>
+<li><a href="#uv">🚀uv</a><ul>
+<li><a href="#1_2">1. 基础配置</a></li>
+<li><a href="#2_2">2. 虚拟环境</a></li>
+<li><a href="#3_2">3. 基础命令</a></li>
+<li><a href="#4_1">4. 清华下载源设置</a></li>
+<li><a href="#5-pytorch">5. pytorch下载源设置</a></li>
+</ul>
+</li>
+<li><a href="#poetry">🚗poetry</a></li>
+<li><a href="#pipenv">🚲pipenv</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h2 id="pythonvenv">🚲Python官方虚拟环境venv</h2>
+<h4 id="1">1. 创建环境</h4>
+<pre><code class="language-shell">python -m venv .venv
+</code></pre>
+<p>生成结构：</p>
+<pre><code>.venv
+├─ Scripts/
+│  ├─ python.exe
+│  └─ pip.exe
+├─ Lib/
+└─ pyvenv.cfg
+</code></pre>
+<h4 id="2">2. 激活环境</h4>
+<pre><code class="language-shell"># Windows
+.venv\Scripts\activate
+
+# Linux/Mac
+source myenv/bin/activate
+</code></pre>
+<h4 id="3">3. 退出环境</h4>
+<pre><code class="language-shell">deactivate
+</code></pre>
+<h4 id="3_1">3. 安装包</h4>
+<pre><code class="language-shell"># 不标准写法
+pip install requests
+
+# 更标准写法
+python -m pip install requests
+</code></pre>
+<blockquote>
+<p><strong>conda、uv、pipenv、poetry 最终都是在调用 pip</strong></p>
+</blockquote>
+<h4 id="4">4. 其他常用命令</h4>
+<p>pip系列:</p>
+<pre><code class="language-shell"># 导入
+pip install -r requirements.txt
+# 导出
+pip freeze &gt; requirements.txt
+# 查看当前python版本
+python --version
+# 查看当前python路径
+python -c &quot;import sys ; print(sys.executable)&quot;
+# 查看当前pip路径
+pip show pip
+</code></pre>
+<p>py系列:</p>
+<pre><code># 查看所有python
+py -0p
+# 用某个版本的python创建环境
+py -3.11 -m venv .venv
+</code></pre>
+<blockquote>
+<p>可以使用<code>py -3.11</code>代替<code>python</code></p>
+</blockquote>
+<h4 id="5-pip">5. 修改pip清华源</h4>
+<pre><code class="language-shell"># 设置 pip 的默认包源！！！
+pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+
+# 设置额外的包索引地址(如果index-url找不到包，再去extra-index-url里找)
+# 不建议设置！！！，会降低下载速度, 一般国内只开清华源最好！！！
+# pip config set global.extra-index-url https://mirrors.aliyun.com/pypi/simple
+</code></pre>
+<p>然后就会在<code>%USERPROFILE%\AppData\Roaming\pip\pip.ini</code>生成配置文件</p>
+<p>补充其他源:</p>
+<pre><code class="language-ini">Pypi: https://pypi.org/simple
+
+豆瓣： https://pypi.douban.com/simple
+阿里： https://mirrors.aliyun.com/pypi/simple
+清华： https://pypi.tuna.tsinghua.edu.cn/simple
+中国科学技术大学    https://pypi.mirrors.ustc.edu.cn/simple
+华中理工大学  http://pypi.hustunique.com/simple
+山东理工大学  http://pypi.sdutlinux.org/simple
+网易  https://mirrors.163.com/pypi/simple/
+腾讯  https://mirrors.cloud.tencent.com/pypi/simple
+</code></pre>
+<h4 id="6-whl">6. 本地化whl</h4>
+<p>下载所有的.whl文件到wheelhouse文件夹下</p>
+<pre><code>python -m pip download -r requirements.txt -d wheelhouse -i https://pypi.tuna.tsinghua.edu.cn/simple --prefer-binary
+</code></pre>
+<blockquote>
+<p>如果没有whl文件，而是tar.gz的话，则会编译成whl后保存</p>
+</blockquote>
+<p>安装方式:</p>
+<pre><code>py -3.11 -m venv .venv
+.venv\Scripts\activate
+python -m pip install -r requirements.txt --find-links=wheelhouse -i https://pypi.tuna.tsinghua.edu.cn/simple --prefer-binary
+</code></pre>
+<h2 id="conda">🚗Conda</h2>
+<p>使用<code>requirements.txt</code>管理python环境 -&gt; 对版本管理不友好</p>
+<p>分类:</p>
+<ul>
+<li>anaconda: 可视化界面, 支持命令行, 但冗杂庞大</li>
+<li>miniconda: 支持命令行, 轻量化 -&gt; <strong>个人推荐</strong></li>
+</ul>
+<p>官网: https://www.anaconda.com/</p>
+<p>下载: https://www.anaconda.com/download/success</p>
+<blockquote>
+<p>conda环境默认都在<code>C:\Users\用户\.conda\envs</code>下
+安装的包放在<code>环境\Lib\site-packages</code>下</p>
+</blockquote>
+<h4 id="1_1">1. 基础配置</h4>
+<p>虚拟环境(加入PATH):</p>
+<pre><code>D:\...\miniconda3
+D:\...\miniconda3\Scripts
+D:\...\miniconda3\Library\bin
+</code></pre>
+<p>cmd中执行:</p>
+<pre><code class="language-shell"># 让 Conda 能够在 cmd 中正常使用
+conda init cmd.exe
+# 在user下生成.condarc文件
+conda config --set show_channel_urls yes 
+</code></pre>
+<p>替换.condarc文件: (清华源)</p>
+<pre><code>channels:
+  - defaults
+show_channel_urls: true
+default_channels:
+  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main
+  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/r
+  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/msys2
+custom_channels:
+  conda-forge: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud
+  msys2: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud
+  bioconda: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud
+  menpo: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud
+  pytorch: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud
+  pytorch-lts: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud
+  simpleitk: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud
+  deepmodeling: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/
+</code></pre>
+<h4 id="2_1">2. 基础命令</h4>
+<pre><code class="language-shell"># 所有环境
+conda env list
+# 创建
+conda create --name 名字 python=3.11.5
+conda create -n 名字 python=3.10.9
+# 克隆环境
+conda create --clone 名字 --name 新名字
+# 删除环境
+conda remove --name 名字 --all
+# 激活环境
+conda activate 名字
+</code></pre>
+<h2 id="uv">🚀uv</h2>
+<p>使用<code>pyproject.toml</code>管理python环境 -&gt; 利于环境迁移</p>
+<p>官网: https://uv.doczh.com/getting-started/installation/</p>
+<p>下载: https://github.com/astral-sh/uv</p>
+<h4 id="1_2">1. 基础配置</h4>
+<pre><code class="language-shell"># 设置复用缓存的目录(避免C盘被塞满)
+setx UV_CACHE_DIR D:\uv_cache
+# 查看复用缓存的目录
+uv cache dir
+</code></pre>
+<h4 id="2_2">2. 虚拟环境</h4>
+<p>uv创建<code>python官方环境</code>: (较少使用)</p>
+<pre><code class="language-shell"># 方法1: 只创建环境
+uv venv
+uv venv --python 3.11.5
+# 给该环境装入pip(因为uv的venv默认不装pip)
+uv pip install pip
+</code></pre>
+<p>uv创建<code>uv项目环境</code>: (<strong>常用</strong>)</p>
+<pre><code class="language-shell"># 方法2: 创建环境和配置文件(pyproject.toml和.python-version)
+uv python pin 3.11.5
+uv init
+
+# 修改项目环境中的python版本
+# (相当于修改.python-version)
+# (前提是要与pyproject.toml里的匹配)
+uv python pin 3.11.5
+
+# 添加包(同步pyproject.toml)
+uv add requests==2.31.0
+# 删除包
+uv remove requests
+
+# 基于pyproject.toml来安装
+uv sync
+
+# 运行python代码(方法1)
+# (uv的简化命令)
+uv run ./xxx.py
+# 运行python代码(方法2)
+# (uv run python ... 等价于 python ...)
+uv run python ...
+
+# 查看项目环境(方法1)
+uv tree
+# 查看项目环境(方法2)
+uv pip list
+</code></pre>
+<blockquote>
+<p><code>uv run python</code>等价于<code>python</code></p>
+<p><code>uv pip</code>等价于<code>pip</code></p>
+</blockquote>
+<h4 id="3_2">3. 基础命令</h4>
+<pre><code class="language-shell"># 查看可用和已安装的 Python 版本
+uv python list
+</code></pre>
+<h4 id="4_1">4. 清华下载源设置</h4>
+<p>在<code>pyproject.toml</code>后面写入:</p>
+<pre><code class="language-toml">[[tool.uv.index]]
+# url = &quot;https://pypi.org/simple&quot;
+url = &quot;https://pypi.tuna.tsinghua.edu.cn/simple&quot;
+default = true
+</code></pre>
+<h4 id="5-pytorch">5. pytorch下载源设置</h4>
+<p>在<code>pyproject.toml</code>后面写入: (注意需改cuda版本)</p>
+<pre><code class="language-toml">[tool.uv.sources]
+torch = [
+  { index = &quot;pytorch-cu121&quot;, marker = &quot;sys_platform == 'linux' or sys_platform == 'win32'&quot; },
+]
+torchvision = [
+  { index = &quot;pytorch-cu121&quot;, marker = &quot;sys_platform == 'linux' or sys_platform == 'win32'&quot; },
+]
+torchaudio = [
+  { index = &quot;pytorch-cu121&quot;, marker = &quot;sys_platform == 'linux' or sys_platform == 'win32'&quot; },
+]
+
+[[tool.uv.index]]
+name = &quot;pytorch-cu121&quot;
+url = &quot;https://download.pytorch.org/whl/cu121&quot;
+explicit = true # 表示 只有在 [tool.uv.sources] 明确指定了这个索引源的包，才会使用这个源
+</code></pre>
+<h2 id="poetry">🚗poetry</h2>
+<p>也是使用<code>pyproject.toml</code>, 挺好的</p>
+<p>但是uv是rust重写的, 所以uv更快</p>
+<p>-&gt; 略</p>
+<h2 id="pipenv">🚲pipenv</h2>
+<p>过时 </p>
+<p>-&gt; 略</p>
+</article>
+<p class="back"><a href="../index.html">← 返回首页</a></p>
+</main>
+<footer class="site-foot">
+  <p>© 2026 byzh · <a href="https://byzh31211.github.io">https://byzh31211.github.io</a></p>
+  <p class="built">由 build.py 生成</p>
+</footer>
+<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+<script>if (window.hljs) hljs.highlightAll();</script>
+
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>[AI工具从入门到入土] torch · byzh 的笔记本</title>
+<meta name="description" content="[AI工具从入门到入土] torch">
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github-dark.min.css">
+
+</head>
+<body>
+<header class="site-head">
+  <a class="brand" href="../index.html">byzh 的笔记本</a>
+  <nav>
+    <a href="../index.html">文章</a>
+    <a href="../about.html">关于</a>
+  </nav>
+</header>
+<main>
+<article class="post">
+<h1>[AI工具从入门到入土] torch</h1>
+<p class="meta"><time datetime="2026-05-17">2026-05-17</time> · <span class="cat">AI工具从入门到入土</span></p>
+<h1 id="torchcat">torch.cat</h1>
+<p><strong>在已有维度上堆叠</strong></p>
+<p>张量(2, 10) 和 张量(2, 10)</p>
+<p>-&gt; 张量(4, 10): 称为沿第一个维度(axis/dim = 0)堆叠</p>
+<p>-&gt; 张量(2, 20): 称为沿第二个维度(axis/dim = 1)堆叠</p>
+<h1 id="torchstack">torch.stack</h1>
+<p>在新维度上堆叠 (<strong>stack = unsqueeze + cat</strong>)</p>
+<p>张量(10,) 和 张量(10,)</p>
+<p>-&gt; 张量(2, 10): 称为沿第一个维度(axis/dim = 0)堆叠</p>
+</article>
+<p class="back"><a href="../index.html">← 返回首页</a></p>
+</main>
+<footer class="site-foot">
+  <p>© 2026 byzh · <a href="https://byzh31211.github.io">https://byzh31211.github.io</a></p>
+  <p class="built">由 build.py 生成</p>
+</footer>
+<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+<script>if (window.hljs) hljs.highlightAll();</script>
+
+</body>
+</html>

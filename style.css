@@ -1,0 +1,241 @@
+/* ── 变量：浅色 / 深色 ───────────────────────────────── */
+:root {
+  --bg: #ffffff;
+  --fg: #1f2328;
+  --muted: #6e7781;
+  --line: #e6e8eb;
+  --accent: #0969da;
+  --code-bg: #f6f8fa;
+  --mark-bg: #0d1117;
+  --max: 46rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0d1117;
+    --fg: #e6edf3;
+    --muted: #8b949e;
+    --line: #21262d;
+    --accent: #58a6ff;
+    --code-bg: #161b22;
+    --mark-bg: #161b22;
+  }
+}
+
+/* ── 基础 ────────────────────────────────────────────── */
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  padding: 0 1.25rem;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+    "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ── 页头 ────────────────────────────────────────────── */
+.site-head {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 2rem 0 1rem;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.brand {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--fg);
+  letter-spacing: .01em;
+}
+.brand:hover { text-decoration: none; color: var(--accent); }
+
+.site-head nav { display: flex; gap: 1.1rem; font-size: .92rem; }
+.site-head nav a { color: var(--muted); }
+.site-head nav a:hover { color: var(--accent); text-decoration: none; }
+
+/* ── 主体 ────────────────────────────────────────────── */
+main { max-width: var(--max); margin: 0 auto; padding: 2rem 0 3rem; }
+
+/* 首页 */
+.home-title { font-size: 1.75rem; margin: 0 0 .35rem; letter-spacing: -.01em; }
+.home-sub { margin: 0 0 2.25rem; color: var(--muted); font-size: .95rem; }
+
+.post-list { list-style: none; margin: 0; padding: 0; }
+.post-list li {
+  padding: .85rem 0;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: .35rem 1rem;
+}
+.post-list li:last-child { border-bottom: 0; }
+.post-list a {
+  display: flex;
+  align-items: baseline;
+  gap: .8rem;
+  color: var(--fg);
+  min-width: 0;
+}
+.post-list a:hover { text-decoration: none; color: var(--accent); }
+.post-list time {
+  flex: none;
+  color: var(--muted);
+  font-size: .8rem;
+  font-variant-numeric: tabular-nums;
+  font-family: ui-monospace, Consolas, monospace;
+}
+.ptitle { font-weight: 500; }
+
+.li-meta { font-size: .78rem; color: var(--muted); display: flex; gap: .6rem; }
+.cat, .tag { color: var(--muted); }
+
+/* 文章 */
+.post h1 {
+  font-size: 1.65rem;
+  line-height: 1.35;
+  margin: 0 0 .5rem;
+  letter-spacing: -.01em;
+}
+.post h1 code { font-size: .95em; }
+
+.meta {
+  margin: 0 0 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--line);
+  color: var(--muted);
+  font-size: .85rem;
+}
+.meta time { font-variant-numeric: tabular-nums; }
+
+/* 目录 (Markdown 的 [TOC]) */
+.toc {
+  margin: 0 0 1.6rem;
+  padding: .75rem 1.1rem;
+  background: var(--code-bg);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font-size: .875rem;
+  line-height: 1.6;
+}
+.toc .toctitle { display: block; font-weight: 600; margin-bottom: .3rem; color: var(--muted); }
+.toc ul { margin: 0; padding-left: 1.1rem; list-style: none; }
+.toc > ul { padding-left: 0; }
+.toc li { margin: .15rem 0; }
+.toc a { color: var(--muted); }
+.toc a:hover { color: var(--accent); text-decoration: none; }
+
+.post h2 {
+  font-size: 1.25rem;
+  margin: 2.5rem 0 .75rem;
+  padding-bottom: .3rem;
+  border-bottom: 1px solid var(--line);
+}
+.post h3 { font-size: 1.05rem; margin: 1.9rem 0 .6rem; }
+.post h4 { font-size: 1rem; margin: 1.5rem 0 .5rem; }
+
+.post p { margin: 0 0 1.05rem; }
+.post ul, .post ol { margin: 0 0 1.05rem; padding-left: 1.4rem; }
+.post li { margin: .3rem 0; }
+
+.post blockquote {
+  margin: 1.2rem 0;
+  padding: .1rem 1rem;
+  border-left: 3px solid var(--line);
+  color: var(--muted);
+}
+
+.post img { max-width: 100%; height: auto; border-radius: 6px; }
+
+.post hr { border: 0; border-top: 1px solid var(--line); margin: 2.2rem 0; }
+
+/* 行内代码 */
+code {
+  font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+  font-size: .875em;
+}
+.post :not(pre) > code {
+  background: var(--code-bg);
+  padding: .15em .4em;
+  border-radius: 4px;
+  border: 1px solid var(--line);
+  word-break: break-word;
+}
+
+/* 代码块：始终深色底，配合 github-dark 主题 */
+pre {
+  margin: 0 0 1.2rem;
+  padding: .9rem 1rem;
+  background: var(--mark-bg);
+  border-radius: 8px;
+  overflow-x: auto;
+  line-height: 1.55;
+  -webkit-overflow-scrolling: touch;
+}
+pre code {
+  background: none !important;
+  padding: 0 !important;
+  border: 0 !important;
+  font-size: .84rem;
+  color: #e6edf3;
+  white-space: pre;
+}
+[data-highlighted="yes"] { background: none !important; }
+
+/* 表格 */
+.post table {
+  width: 100%;
+  margin: 0 0 1.3rem;
+  border-collapse: collapse;
+  font-size: .9rem;
+  display: block;
+  overflow-x: auto;
+}
+.post th, .post td {
+  border: 1px solid var(--line);
+  padding: .45rem .7rem;
+  text-align: left;
+}
+.post th { background: var(--code-bg); font-weight: 600; }
+.post tbody tr:nth-child(even) { background: color-mix(in srgb, var(--code-bg) 45%, transparent); }
+
+/* MathJax 溢出保护 */
+mjx-container { overflow-x: auto; overflow-y: hidden; max-width: 100%; }
+
+/* 返回 */
+.back { margin-top: 3rem; font-size: .9rem; }
+
+/* ── 页脚 ────────────────────────────────────────────── */
+.site-foot {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 1.5rem 0 2.5rem;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: .82rem;
+}
+.site-foot p { margin: .15rem 0; }
+.site-foot .built { opacity: .7; }
+
+/* ── 窄屏 ────────────────────────────────────────────── */
+@media (max-width: 560px) {
+  body { padding: 0 1rem; font-size: 15.5px; }
+  .site-head { padding-top: 1.4rem; }
+  .post-list li { flex-direction: column; }
+  .post h1 { font-size: 1.4rem; }
+  .post h2 { font-size: 1.15rem; }
+}

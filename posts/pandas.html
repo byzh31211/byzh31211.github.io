@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>[AI工具从入门到入土] pandas · byzh 的笔记本</title>
+<meta name="description" content="[AI工具从入门到入土] pandas">
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github-dark.min.css">
+
+</head>
+<body>
+<header class="site-head">
+  <a class="brand" href="../index.html">byzh 的笔记本</a>
+  <nav>
+    <a href="../index.html">文章</a>
+    <a href="../about.html">关于</a>
+  </nav>
+</header>
+<main>
+<article class="post">
+<h1>[AI工具从入门到入土] pandas</h1>
+<p class="meta"><time datetime="2026-05-17">2026-05-17</time> · <span class="cat">AI工具从入门到入土</span></p>
+<h1 id="_1">注意</h1>
+<ol>
+<li>简单数据预处理先用excel做</li>
+<li>复杂数据预处理用jupyter</li>
+<li>全都处理好, 然后导出为csv, 再用py</li>
+</ol>
+<h1 id="_2">读取</h1>
+<h4 id="1">1.第一行有杂乱信息</h4>
+<pre><code class="language-py">df = pd.read_csv(
+    './Wimbledon_featured_matches.csv', encoding='gbk',
+    skiprows=1 # 跳过第1行, 从2行开始读取
+)
+</code></pre>
+<h1 id="_3">显示</h1>
+<h4 id="1_1">1.横线被压缩成...</h4>
+<pre><code class="language-py">pd.set_option(&quot;display.max_columns&quot;, None)   # 显示所有列
+pd.set_option(&quot;display.width&quot;, None)         # 不限制总宽度（按终端/环境尽量铺开）
+pd.set_option(&quot;display.max_colwidth&quot;, None)  # 单个单元格内容不截断（长字符串也全显示）
+</code></pre>
+<blockquote>
+<p>建议保存成excel再看</p>
+</blockquote>
+<h1 id="_4">类型转换</h1>
+<pre><code class="language-py"># 一维
+s = pd.to_numeric(df[col], errors=&quot;coerce&quot;)
+# 多维
+df_numeric = df[cols].apply(pd.to_numeric, errors=&quot;coerce&quot;)
+</code></pre>
+<p><code>errors="coerce"</code> 的意思是：<strong>强制转</strong>，转不了就变成 <code>NaN</code>（缺失值）</p>
+<blockquote>
+<p>做 <code>quantile()</code>、<code>mean()</code> 这类统计时，<strong>NaN 会被自动忽略</strong>（默认 <code>skipna=True</code>）</p>
+</blockquote>
+<h1 id="group">分组 group</h1>
+<h4 id="1_2">1.拆成字典</h4>
+<pre><code class="language-py">grouped = {
+    依据内容: sub_df.reset_index(drop=True) # sub_df 的行索引重新设置为从 0 开始
+    for 依据内容, sub_df in df.groupby(&quot;依据&quot;)
+}
+</code></pre>
+<h4 id="2">2.直接遍历</h4>
+<pre><code class="language-py">for 依据内容, sub_df in df.groupby(&quot;依据&quot;):
+    ...
+</code></pre>
+<h1 id="_5">数据分析</h1>
+<h4 id="15">1.序列中最多的前5个元素</h4>
+<pre><code class="language-py">top5 = (
+    pd.to_numeric(df['p1_distance_run_new'], errors='coerce')  # 只在统计时转数值
+      .value_counts()                        # 统计频数
+      .head(5)                               # 取前 5
+)
+</code></pre>
+<h4 id="2_1">2.第几分位数</h4>
+<pre><code class="language-py">Q1 = s.quantile(0.25) # 第1四分位数
+Q3 = s.quantile(0.75) # 第3四分位数
+</code></pre>
+<h1 id="series">Series小工具</h1>
+<pre><code class="language-py"># 有哪些类别
+s.unique()
+# 各类分别有多少个样本
+s.value_counts()
+# 均值,方差,最大,最小,分位数
+s.describe()
+</code></pre>
+</article>
+<p class="back"><a href="../index.html">← 返回首页</a></p>
+</main>
+<footer class="site-foot">
+  <p>© 2026 byzh · <a href="https://byzh31211.github.io">https://byzh31211.github.io</a></p>
+  <p class="built">由 build.py 生成</p>
+</footer>
+<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+<script>if (window.hljs) hljs.highlightAll();</script>
+
+</body>
+</html>
