@@ -54,7 +54,9 @@ tags = ["docker", "容器"]
 .\publish.ps1
 ```
 
-依次执行「编译 → 提交 → 推送」，约 1 分钟后线上生效。
+依次执行「编译 → 提交 → 推送」，约 1 分钟后线上生效。编译完会自动跑**链接自检**：扫描所有生成页面的 `href`，解析成真实文件路径，有一条坏链就中止、不会推送。
+
+> 注意：GitHub Pages 的 CDN 缓存最长 10 分钟，推送后如果看到旧页面，等一下再刷新。
 
 ## 站点功能
 
@@ -68,8 +70,10 @@ tags = ["docker", "容器"]
 ## 只编译不发布
 
 ```powershell
-E:\py_uv_env\py-3-11-5-opencode\.venv\Scripts\python.exe build.py
+E:\py_uv_env\py-3-11-5-opencode\.venv\Scripts\python.exe build.py --check
 ```
+
+`--check` 会额外做链接自检，发现坏链时退出码为 1。
 
 本地预览（起一个静态服务器，因为搜索要 fetch `index.json`）：
 
