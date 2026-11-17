@@ -17,9 +17,9 @@ function Invoke-Git {
 $py = "E:\py_uv_env\py-3-11-5-opencode\.venv\Scripts\python.exe"
 if (-not (Test-Path $py)) { $py = "python" }
 
-Write-Host "==> 编译" -ForegroundColor Cyan
-& $py build.py
-if ($LASTEXITCODE -ne 0) { Write-Host "编译失败, 已中止" -ForegroundColor Red; exit 1 }
+Write-Host "==> 编译 + 链接自检" -ForegroundColor Cyan
+& $py build.py --check
+if ($LASTEXITCODE -ne 0) { Write-Host "编译或链接自检失败, 已中止 (未推送)" -ForegroundColor Red; exit 1 }
 
 Write-Host "==> 检查变更" -ForegroundColor Cyan
 $changes = git status --porcelain

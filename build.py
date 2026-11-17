@@ -17,7 +17,7 @@ import sys
 import tomllib
 from datetime import datetime
 from pathlib import Path
-from urllib.parse import quote
+from urllib.parse import quote, unquote
 
 import markdown
 
@@ -420,7 +420,7 @@ def build_home(posts, cats, tags, year):
 def build_categories(cats, year):
     secs = ['<h1 class="page-title">分类</h1>']
     if cats:
-        secs.append(chips(cats, "categories", 0, ""))
+        secs.append(chips(cats, "categories", 1, ""))
         for name, items in cats:
             secs.append(
                 f'<section class="term">\n'
@@ -455,7 +455,7 @@ def build_categories(cats, year):
 def build_tags(tags, year):
     secs = ['<h1 class="page-title">标签</h1>']
     if tags:
-        secs.append(chips(tags, "tags", 0, ""))
+        secs.append(chips(tags, "tags", 1, ""))
         for name, items in tags:
             secs.append(
                 f'<section class="term">\n'
@@ -605,6 +605,33 @@ def build_about(year):
     ))
 
 
+def check_links() -> list[str]:
+    """扫描所有生成的 html，检查站内相对链接是否有坏链。"""
+    errors = []
+    pages = sorted(ROOT.rglob("*.html"))
+    for page in pages:
+        rel = page.relative_to(ROOT)
+        text = page.read_text(encoding="utf-8")
+        for href in re.findall(r'href="([^"]+)"', text):
+            if href.startswith(("http://", "https://", "mailto:", "//", "#")):
+                continue
+            if "+" in href:            # JS 里拼接的模板串，跳过
+                continue
+            target = href.split("#")[0].split("?")[0]
+            if not target:
+                continue
+            resolved = (page.parent / unquote(target)).resolve()
+            if resolved.is_dir():
+                resolved = resolved / "index.html"
+            if not resolved.exists():
+                errors.append(f"{rel}  ->  {href}")
+
+    if not (ROOT / "index.json").exists():
+        errors.append("(根目录缺少 index.json，搜索会失效)")
+
+    return sorted(set(errors))
+
+
 def main():
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     year = datetime.now().year
@@ -646,6 +673,16 @@ def main():
 
     write(ROOT / ".nojekyll", "")
     print(f"\n完成: {len(posts)} 篇文章 · {len(cats)} 个分类 · {len(tags)} 个标签")
+
+    if "--check" in sys.argv:
+        print("\n==> 链接自检")
+        errs = check_links()
+        if errs:
+            print(f"发现 {len(errs)} 条坏链:")
+            for e in errs:
+                print("   ", e)
+            sys.exit(1)
+        print(f"    通过: {len(list(ROOT.rglob('*.html')))} 个页面, 0 坏链")
 
 
 if __name__ == "__main__":
