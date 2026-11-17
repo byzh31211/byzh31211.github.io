@@ -6,6 +6,9 @@ param([string]$Message = "")
 $ErrorActionPreference = "Stop"
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
+# git 会把进度信息写到 stderr（不是错误），这里不能按异常处理
+$ErrorActionPreference = "Continue"
+
 function Invoke-Git {
     git @args 2>&1 | ForEach-Object { Write-Host "   $_" }
     return $LASTEXITCODE
