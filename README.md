@@ -6,7 +6,10 @@
 ## 目录结构
 
 ```
-notes/            文章源文件（Markdown + TOML 头） ← 只改这里
+notes/            文章源文件 ← 只改这里
+  xxx.md            单文件形式
+  某目录/index.md   bundle 形式（配图放同目录）
+assets/           图标等原始素材（favicon.ico 会自动生成到根目录）
 build.py          编译器
 style.css         全部样式
 publish.ps1       一键发布
@@ -14,14 +17,28 @@ index.html        首页          ┐
 archives.html     归档          │
 categories/       分类页        │ 全部是生成物，不要手改
 tags/             标签页        │
-posts/            文章页        │
+posts/            文章页+配图   │
 search.html       搜索页        │
 index.json        搜索索引      ┘
 ```
 
 ## 写一篇新文章
 
-在 `notes/` 里新建 `xxx.md`，头部照抄（TOML 格式）：
+两种写法都支持，任选其一。
+
+**① 单文件（没配图）**：`notes/xxx.md`
+
+**② bundle（有配图）**：新建文件夹 `notes/某文章/index.md`，图片直接放同一层，正文里用相对路径引用：
+
+```
+notes/画质and分辨率/
+├── index.md          ← 里面写 ![](image1.jpeg)
+└── image1.jpeg
+```
+
+编译时会自动把图片复制到 `posts/画质and分辨率/image1.jpeg`，并改好正文里的路径。
+
+头部照抄（TOML 格式）：
 
 ```toml
 +++
@@ -31,6 +48,7 @@ math = false
 title = '文章标题'
 categories = ["AI工具从入门到入土"]
 tags = ["docker", "容器"]
+slug = 'my-post'      # 可选，自定义 URL
 +++
 ```
 
@@ -42,6 +60,7 @@ tags = ["docker", "容器"]
 | `categories = ["…"]` | 同上，生成 `/categories/…html` |
 | `math = true` | 页面加载 MathJax，可用 `$$…$$` |
 | `draft = true` | 跳过不编译 |
+| `slug = 'my-post'` | 自定义文章 URL 为 `/posts/my-post.html`；不写就用文件名/目录名 |
 | `@[TOC]` | 无需保留（目录由侧栏自动生成） |
 | `:rocket:` `:gear:` 等 | emoji 短代码 |
 | ```` ```py ```` | 代码块按语言高亮 |
@@ -83,6 +102,18 @@ TERM_SLUGS = {
 - 搜索：`index.json` + 纯前端匹配，支持标题/分类/标签/正文
 - 文章页：宽屏（≥1300px）右侧悬浮目录并跟随滚动高亮，窄屏折叠成「目录」
 - 深色模式：跟随系统，右上角按钮可手动切换（记在 localStorage）
+- 站点图标：`assets/*.ico` 自动复制成根目录 `favicon.ico`，换图标只要替换 assets 里的 ico
+
+## 文章 URL 规则
+
+| 源 | URL |
+|---|---|
+| `notes/cache.md` | `/posts/cache.html` |
+| `notes/冷笑话/index.md` | `/posts/冷笑话.html`（中文目录名直接用） |
+| 任意文章写 `slug = 'cold-jokes'` | `/posts/cold-jokes.html` |
+
+> 中文 URL 在地址栏会显示成 `%E5%86%B7...`，个别老浏览器（360 兼容模式等）可能打不开。
+> 想避开就用 `slug = '英文名'`。
 
 ## 只编译不发布
 

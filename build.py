@@ -2,9 +2,11 @@
 # -*- coding: utf-8 -*-
 """静态博客编译器。
 
-源文件:  notes/*.md       (TOML 风格 +++ front matter)
+源文件:  notes/*.md              单文件形式
+         notes/<目录>/index.md   bundle 形式（同目录下的图片会一起复制）
+         头部为 TOML 风格的 +++ front matter
 产物:    index.html  archives.html  search.html  index.json  about.html
-         posts/*.html  categories/*.html  tags/*.html
+         favicon.ico  posts/*  categories/*  tags/*
 
 零框架 / 零 npm / 零 GitHub Actions，产物直接 push 即可。
 """
@@ -18,7 +20,7 @@ import sys
 import tomllib
 from datetime import datetime
 from pathlib import Path
-from urllib.parse import unquote
+from urllib.parse import quote, unquote
 
 import markdown
 
@@ -44,6 +46,7 @@ ABOUT_MD = """
 TERM_SLUGS = {
     # 分类 / 标签的中文名 -> URL 里的英文名（不配置的话自动用 t-xxxxxxxx.html）
     "AI工具从入门到入土": "ai-tools",
+    "十万个为什么": "why",
 }
 
 # CDN 资源（想换镜像改这里）
@@ -123,6 +126,7 @@ PAGE = """<!doctype html>
 <script>(function(){try{var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
 <link rel="stylesheet" href="{{ROOT}}style.css">
 <link rel="stylesheet" href="{{HL_CSS}}">
+<link rel="icon" href="{{ROOT}}favicon.ico" sizes="any">
 {{HEAD_EXTRA}}
 </head>
 <body>
@@ -215,6 +219,11 @@ def u(name: str) -> str:
     return slug
 
 
+def pu(slug: str) -> str:
+    """文章 slug -> URL 片段（中文文件名需要百分号编码）。"""
+    return quote(str(slug))
+
+
 def read_minutes(words: int) -> int:
     return max(1, round(words / WORDS_PER_MIN))
 
@@ -287,7 +296,7 @@ def post_list(posts, depth=0, show_meta=True, limit=None,
         meta = " · ".join(bits + ([extra] if extra else []))
         items.append(
             "<li>\n"
-            f'  <a class="row" href="{prefix}posts/{p["slug"]}.html">\n'
+            f'  <a class="row" href="{prefix}posts/{pu(p["slug"])}.html">\n'
             f'    <time datetime="{p["date"]:%Y-%m-%d}">{p["date"]:%Y-%m-%d}</time>\n'
             f'    <span class="ptitle">{p["title_html"]}</span>\n'
             "  </a>\n"
@@ -312,13 +321,44 @@ def chips(mapping, kind, depth=0, empty_hint="") -> str:
 
 # ───────────────────────── 主流程 ─────────────────────────
 
+IMG_SRC_RE = re.compile(r'(<img\b[^>]*?\bsrc=")([^"]+)(")', re.I)
+
+
+def iter_sources():
+    """产出 (index.md 路径, 默认 slug, 资源目录或 None)。
+
+    支持两种形式:
+      notes/xxx.md              -> slug = xxx
+      notes/某目录/index.md     -> slug = 某目录, 同目录下的图片随之复制
+    """
+    for p in sorted(SRC.glob("*.md")):
+        yield p, p.stem, None
+    for d in sorted(SRC.iterdir()):
+        if not d.is_dir():
+            continue
+        idx = d / "index.md"
+        if idx.exists():
+            yield idx, d.name, d
+
+
+def rewrite_img_src(content: str, slug: str) -> str:
+    """把正文里的相对图片路径改写为 <slug>/<文件>，否则会去 posts/ 根下找。"""
+    def repl(m):
+        src = m.group(2)
+        if src.startswith(("http://", "https://", "//", "data:", "/", "#")):
+            return m.group(0)
+        src = src[2:] if src.startswith("./") else src
+        return f"{m.group(1)}{pu(slug)}/{quote(src)}{m.group(3)}"
+    return IMG_SRC_RE.sub(repl, content)
+
+
 def load_posts(md: markdown.Markdown):
     posts = []
     if not SRC.exists():
         print(f"源目录不存在: {SRC}")
         return posts
 
-    for path in sorted(SRC.glob("*.md")):
+    for path, default_slug, asset_dir in iter_sources():
         text = path.read_text(encoding="utf-8-sig")
         m = FRONT_RE.match(text)
         if not m:
@@ -329,10 +369,10 @@ def load_posts(md: markdown.Markdown):
             print(f"  [跳过] {path.name}: front matter 解析失败 -> {e}")
             continue
         if fm.get("draft", False):
-            print(f"  [草稿] {path.name}")
+            print(f"  [草稿] {default_slug}")
             continue
 
-        slug = path.stem
+        slug = str(fm.get("slug") or default_slug)
         body = text[m.end():]
         if STRIP_BODY_H1:
             body = "\n".join(body.lstrip("\r\n").splitlines()[1:]) \
@@ -348,6 +388,17 @@ def load_posts(md: markdown.Markdown):
         md.reset()
         content = md.convert(preprocess(body))
         toc = re.sub(r'<span class="toctitle">.*?</span>', "", md.toc, flags=re.S)
+
+        images = []
+        if asset_dir is not None:
+            images = [f for f in sorted(asset_dir.iterdir())
+                      if f.is_file() and f.suffix.lower() != ".md"]
+            if images:
+                dest = POST_DIR / slug
+                dest.mkdir(parents=True, exist_ok=True)
+                for f in images:
+                    shutil.copy2(f, dest / f.name)
+                content = rewrite_img_src(content, slug)
 
         plain = html.unescape(TAG_RE.sub(" ", content))
         plain = re.sub(r"\s+", " ", plain).strip()
@@ -365,6 +416,7 @@ def load_posts(md: markdown.Markdown):
             "toc_count": toc.count("<li>"),
             "words": len(re.sub(r"\s", "", preprocess(body))),
             "plain": plain[:4000],
+            "images": [f.name for f in images],
             "math": bool(fm.get("math")) and ("$$" in body or "\\[" in body),
         })
 
@@ -614,7 +666,7 @@ def build_search(posts, year):
 
     index = [{
         "title": p["title_plain"],
-        "url": f'posts/{p["slug"]}.html',
+        "url": f'posts/{pu(p["slug"])}.html',
         "date": f'{p["date"]:%Y-%m-%d}',
         "cats": p["cats"],
         "tags": p["tags"],
@@ -636,28 +688,34 @@ def build_about(year):
 
 
 def check_links() -> list[str]:
-    """扫描所有生成的 html，检查站内相对链接是否有坏链。"""
+    """扫描所有生成的 html，检查站内相对 <a href> 与 <img src> 是否有坏链。"""
     errors = []
-    pages = sorted(ROOT.rglob("*.html"))
-    for page in pages:
-        rel = page.relative_to(ROOT)
+
+    def verify(page: Path, ref: str):
+        if ref.startswith(("http://", "https://", "mailto:", "//", "#", "data:")):
+            return
+        if "+" in ref:                 # JS 里拼接的模板串，跳过
+            return
+        target = ref.split("#")[0].split("?")[0]
+        if not target:
+            return
+        resolved = (page.parent / unquote(target)).resolve()
+        if resolved.is_dir():
+            resolved = resolved / "index.html"
+        if not resolved.exists():
+            errors.append(f"{page.relative_to(ROOT)}  ->  {ref}")
+
+    for page in sorted(ROOT.rglob("*.html")):
         text = page.read_text(encoding="utf-8")
         for href in re.findall(r'href="([^"]+)"', text):
-            if href.startswith(("http://", "https://", "mailto:", "//", "#")):
-                continue
-            if "+" in href:            # JS 里拼接的模板串，跳过
-                continue
-            target = href.split("#")[0].split("?")[0]
-            if not target:
-                continue
-            resolved = (page.parent / unquote(target)).resolve()
-            if resolved.is_dir():
-                resolved = resolved / "index.html"
-            if not resolved.exists():
-                errors.append(f"{rel}  ->  {href}")
+            verify(page, href)
+        for src in re.findall(r'<img\b[^>]*?\bsrc="([^"]+)"', text, re.I):
+            verify(page, src)
 
     if not (ROOT / "index.json").exists():
         errors.append("(根目录缺少 index.json，搜索会失效)")
+    if (ROOT / "favicon.ico").exists() is False and (ROOT / "assets").exists():
+        errors.append("(assets/ 里有图标但根目录没有 favicon.ico)")
 
     return sorted(set(errors))
 
@@ -705,6 +763,14 @@ def main():
     build_archives(posts, year)
     build_search(posts, year)
     build_about(year)
+
+    # favicon：assets/ 里的 .ico 复制到根目录（浏览器默认只请求 /favicon.ico）
+    assets = ROOT / "assets"
+    if assets.exists():
+        icos = sorted(assets.glob("*.ico"))
+        if icos:
+            shutil.copy2(icos[0], ROOT / "favicon.ico")
+            print(f"  [图标] favicon.ico <- assets/{icos[0].name}")
 
     write(ROOT / ".nojekyll", "")
     print(f"\n完成: {len(posts)} 篇文章 · {len(cats)} 个分类 · {len(tags)} 个标签")

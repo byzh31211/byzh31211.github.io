@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>[x] 冷笑话 · byzh 的笔记本</title>
+<meta name="description" content="[x] 冷笑话">
+<script>(function(){try{var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github-dark.min.css">
+<link rel="icon" href="../favicon.ico" sizes="any">
+
+</head>
+<body>
+<header class="site-head">
+  <a class="brand" href="../index.html">byzh 的笔记本</a>
+  <nav>
+    <a href="../index.html">文章</a>
+    <a href="../categories/index.html">分类</a>
+    <a href="../tags/index.html">标签</a>
+    <a href="../archives.html">归档</a>
+    <a href="../search.html">搜索</a>
+    <a href="../about.html">关于</a>
+  </nav>
+  <button class="theme-btn" type="button" title="切换深色模式" aria-label="切换深色模式">🌙</button>
+</header>
+<main>
+<div class="post-wrap">
+<div class="post-main">
+<article class="post">
+<h1>[x] 冷笑话</h1>
+<p class="meta"><time datetime="2026-11-01">2026-11-01</time> · 240 字 · 约 1 分钟 · <a class="cat" href="../categories/x.html">x</a></p>
+<h2 id="_1">冷笑话</h2>
+<p>你知道富士山在哪里吗 -&gt; 在-14和-12之间</p>
+<p>月球撞击地球前, 用什么拦住他 -&gt; 蓝月亮洗衣液</p>
+<p>甲乙丙丁去钓鱼, 为什么丁死了 -&gt; 掉的是沙丁鱼</p>
+<p>甲乙丙丁去搭车, 为什么丁没有上车 -&gt; 卡丁车</p>
+<p>甲乙丙丁去吃东西, 为什么丙没有吃 -&gt; 烧饼</p>
+<p>白气球打了黑气球, 猜一首歌 -&gt; 告白气球</p>
+<p>奥特曼打一明星 -&gt; 打死了</p>
+<p>太空有空间站, 那太挤呢 -&gt; 太挤没有空间站</p>
+<p>什么帽子兼具流行和性感 -&gt; 流行性感冒</p>
+<p>情人节的敌人是 -&gt; 狄仁杰</p>
+<p>桌子乱的反义词是 -&gt; 邓紫棋</p>
+<p>积德行善的反义词是 -&gt; 柯南行凶</p>
+<p>为什么羊洗一千次澡就会变帅 -&gt; 易烊千玺</p>
+</article>
+<p class="back"><a href="../index.html">← 返回首页</a></p></div>
+</div>
+</main>
+<footer class="site-foot">
+  <p>© 2026 byzh · <a href="https://byzh31211.github.io">https://byzh31211.github.io</a></p>
+  <p class="built">由 build.py 生成</p>
+</footer>
+<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+<script>if (window.hljs) hljs.highlightAll();</script>
+<script>
+(function () {
+  var root = document.documentElement;
+  var btn  = document.querySelector('.theme-btn');
+  var mq   = window.matchMedia('(prefers-color-scheme: dark)');
+  function current() { return root.getAttribute('data-theme') || (mq.matches ? 'dark' : 'light'); }
+  function paint()   { btn.textContent = current() === 'dark' ? '☀️' : '🌙'; }
+  paint();
+  btn.addEventListener('click', function () {
+    var next = current() === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('theme', next); } catch (e) {}
+    paint();
+  });
+  mq.addEventListener('change', paint);
+})();
+
+(function () {
+  var side = document.querySelector('.toc-side');
+  if (!side) return;
+  var links = [].slice.call(side.querySelectorAll('a[href^="#"]'));
+  if (links.length < 3) return;
+  var map = {}, current = null;
+  links.forEach(function (a) { map[decodeURIComponent(a.hash.slice(1))] = a; });
+  var heads = [].slice.call(document.querySelectorAll('.post h1[id], .post h2[id], .post h3[id]'))
+    .filter(function (h) { return map[h.id]; });
+  if (!heads.length) return;
+  function onScroll() {
+    var found = heads[0];
+    for (var i = 0; i < heads.length; i++) {
+      if (heads[i].getBoundingClientRect().top <= 120) found = heads[i];
+    }
+    if (found === current) return;
+    if (current) current.classList.remove('active');
+    current = found;
+    var a = map[found.id];
+    if (a) a.classList.add('active');
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
+</body>
+</html>

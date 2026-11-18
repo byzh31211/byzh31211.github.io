@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>分类：十万个为什么 · byzh 的笔记本</title>
+<meta name="description" content="十万个为什么 分类下的全部文章">
+<script>(function(){try{var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github-dark.min.css">
+<link rel="icon" href="../favicon.ico" sizes="any">
+
+</head>
+<body>
+<header class="site-head">
+  <a class="brand" href="../index.html">byzh 的笔记本</a>
+  <nav>
+    <a href="../index.html">文章</a>
+    <a href="../categories/index.html">分类</a>
+    <a href="../tags/index.html">标签</a>
+    <a href="../archives.html">归档</a>
+    <a href="../search.html">搜索</a>
+    <a href="../about.html">关于</a>
+  </nav>
+  <button class="theme-btn" type="button" title="切换深色模式" aria-label="切换深色模式">🌙</button>
+</header>
+<main>
+<div class="container">
+<h1 class="page-title">分类：十万个为什么</h1>
+<p class="muted">3 篇文章</p>
+<ul class="post-list">
+<li>
+  <a class="row" href="../posts/%E7%9C%BC%E7%9D%9B%E6%80%95%E8%93%9D%E5%85%89.html">
+    <time datetime="2026-05-17">2026-05-17</time>
+    <span class="ptitle">[十万个为什么] 眼睛怕蓝光</span>
+  </a>
+  <span class="li-meta">1671 字 · 约 4 分钟</span>
+</li>
+<li>
+  <a class="row" href="../posts/%E7%94%BB%E8%B4%A8and%E5%88%86%E8%BE%A8%E7%8E%87.html">
+    <time datetime="2026-05-17">2026-05-17</time>
+    <span class="ptitle">[十万个为什么] 画质and分辨率</span>
+  </a>
+  <span class="li-meta">660 字 · 约 2 分钟</span>
+</li>
+<li>
+  <a class="row" href="../posts/U%E7%9B%98%E5%88%B7%E9%95%9C%E5%83%8F%E5%90%8E%E5%86%8D%E4%B9%9F%E7%9C%8B%E4%B8%8D%E5%88%B0%E4%BA%86.html">
+    <time datetime="2026-05-17">2026-05-17</time>
+    <span class="ptitle">[十万个为什么] U盘刷镜像后再也看不到了</span>
+  </a>
+  <span class="li-meta">761 字 · 约 2 分钟</span>
+</li>
+</ul>
+<p class="back"><a href="index.html">← 全部分类</a></p>
+</div>
+</main>
+<footer class="site-foot">
+  <p>© 2026 byzh · <a href="https://byzh31211.github.io">https://byzh31211.github.io</a></p>
+  <p class="built">由 build.py 生成</p>
+</footer>
+<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+<script>if (window.hljs) hljs.highlightAll();</script>
+<script>
+(function () {
+  var root = document.documentElement;
+  var btn  = document.querySelector('.theme-btn');
+  var mq   = window.matchMedia('(prefers-color-scheme: dark)');
+  function current() { return root.getAttribute('data-theme') || (mq.matches ? 'dark' : 'light'); }
+  function paint()   { btn.textContent = current() === 'dark' ? '☀️' : '🌙'; }
+  paint();
+  btn.addEventListener('click', function () {
+    var next = current() === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('theme', next); } catch (e) {}
+    paint();
+  });
+  mq.addEventListener('change', paint);
+})();
+
+(function () {
+  var side = document.querySelector('.toc-side');
+  if (!side) return;
+  var links = [].slice.call(side.querySelectorAll('a[href^="#"]'));
+  if (links.length < 3) return;
+  var map = {}, current = null;
+  links.forEach(function (a) { map[decodeURIComponent(a.hash.slice(1))] = a; });
+  var heads = [].slice.call(document.querySelectorAll('.post h1[id], .post h2[id], .post h3[id]'))
+    .filter(function (h) { return map[h.id]; });
+  if (!heads.length) return;
+  function onScroll() {
+    var found = heads[0];
+    for (var i = 0; i < heads.length; i++) {
+      if (heads[i].getBoundingClientRect().top <= 120) found = heads[i];
+    }
+    if (found === current) return;
+    if (current) current.classList.remove('active');
+    current = found;
+    var a = map[found.id];
+    if (a) a.classList.add('active');
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>[十万个为什么] U盘刷镜像后再也看不到了 · byzh 的笔记本</title>
+<meta name="description" content="[十万个为什么] U盘刷镜像后再也看不到了">
+<script>(function(){try{var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github-dark.min.css">
+<link rel="icon" href="../favicon.ico" sizes="any">
+
+</head>
+<body>
+<header class="site-head">
+  <a class="brand" href="../index.html">byzh 的笔记本</a>
+  <nav>
+    <a href="../index.html">文章</a>
+    <a href="../categories/index.html">分类</a>
+    <a href="../tags/index.html">标签</a>
+    <a href="../archives.html">归档</a>
+    <a href="../search.html">搜索</a>
+    <a href="../about.html">关于</a>
+  </nav>
+  <button class="theme-btn" type="button" title="切换深色模式" aria-label="切换深色模式">🌙</button>
+</header>
+<main>
+<div class="post-wrap has-toc">
+<div class="post-main">
+<article class="post">
+<h1>[十万个为什么] U盘刷镜像后再也看不到了</h1>
+<p class="meta"><time datetime="2026-05-17">2026-05-17</time> · 761 字 · 约 2 分钟 · <a class="cat" href="../categories/why.html">十万个为什么</a></p>
+<details class="toc-mobile">
+<summary>目录</summary>
+<div class="toc">
+<ul>
+<li><a href="#u">[十万个为什么] U盘刷镜像后再也看不到了</a><ul>
+<li><a href="#_1">个人导航</a></li>
+<li><a href="#_2">解释</a></li>
+<li><a href="#_3">解决方法</a><ul>
+<li><a href="#1">1. 启动专业工具</a></li>
+<li><a href="#2">2. 彻底清除</a></li>
+<li><a href="#3">3. 重新创建</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+
+</details>
+<h1 id="u">[十万个为什么] U盘刷镜像后再也看不到了</h1>
+<h2 id="_1">个人导航</h2>
+<p>知乎：https://www.zhihu.com/people/byzh_rc</p>
+<p>CSDN：https://blog.csdn.net/qq_54636039</p>
+<p>注：本文仅对所述内容做了框架性引导，具体细节可查询其余相关资料or源码</p>
+<p>参考文章：各方资料</p>
+<h2 id="_2">解释</h2>
+<p>U盘刷镜像后, 在<code>此电脑</code>里再也看不到了</p>
+<p>首先这不是说明U盘坏了:</p>
+<ol>
+<li>刷系统镜像（如 Linux、Armbian、Jetson、OpenWRT、Android 镜像）时，工具会<strong>重写整个磁盘开头的分区表</strong></li>
+<li>==Windows 只认识普通 U 盘分区，不认识这种<strong>系统级磁盘结构</strong>，所以直接不显示盘符==</li>
+<li>若没有分配盘符, 则<code>磁盘管理</code>里能看到 U 盘, <code>此电脑</code>里就看不见</li>
+</ol>
+<pre><code>diskpart
+list disk
+
+select disk 2
+clean
+
+create partition primary
+select partition 1
+format fs=exfat quick
+</code></pre>
+<h2 id="_3">解决方法</h2>
+<h3 id="1">1. 启动专业工具</h3>
+<pre><code># 启动专业磁盘管理工具
+diskpart
+# 扫描并列出电脑所有物理磁盘
+list disk
+</code></pre>
+<h3 id="2">2. 彻底清除</h3>
+<pre><code># 根据list disk找到U盘的编号(例如2)
+select disk 2
+# 把 U 盘最开头的分区表、所有的分区记录、引导信息全部抹除
+clean
+</code></pre>
+<h3 id="3">3. 重新创建</h3>
+<pre><code># 在空白磁盘上创建一个主分区
+create partition primary
+# 选中刚创建好的这个分区(也就是第1个分区)
+select partition 1
+# 快速格式化分区为 exfat 格式
+format fs=exfat quick
+# 给 U盘 分配一个盘符
+assign
+</code></pre>
+<blockquote>
+<p>exfat: 最适合 U 盘的格式，支持 4GB 以上的大文件，且 Windows 和 Mac 都能读写</p>
+</blockquote>
+</article>
+<p class="back"><a href="../index.html">← 返回首页</a></p></div>
+<aside class="toc-side">
+<p class="toc-title">目录</p>
+<div class="toc">
+<ul>
+<li><a href="#u">[十万个为什么] U盘刷镜像后再也看不到了</a><ul>
+<li><a href="#_1">个人导航</a></li>
+<li><a href="#_2">解释</a></li>
+<li><a href="#_3">解决方法</a><ul>
+<li><a href="#1">1. 启动专业工具</a></li>
+<li><a href="#2">2. 彻底清除</a></li>
+<li><a href="#3">3. 重新创建</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+
+</aside>
+</div>
+</main>
+<footer class="site-foot">
+  <p>© 2026 byzh · <a href="https://byzh31211.github.io">https://byzh31211.github.io</a></p>
+  <p class="built">由 build.py 生成</p>
+</footer>
+<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+<script>if (window.hljs) hljs.highlightAll();</script>
+<script>
+(function () {
+  var root = document.documentElement;
+  var btn  = document.querySelector('.theme-btn');
+  var mq   = window.matchMedia('(prefers-color-scheme: dark)');
+  function current() { return root.getAttribute('data-theme') || (mq.matches ? 'dark' : 'light'); }
+  function paint()   { btn.textContent = current() === 'dark' ? '☀️' : '🌙'; }
+  paint();
+  btn.addEventListener('click', function () {
+    var next = current() === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('theme', next); } catch (e) {}
+    paint();
+  });
+  mq.addEventListener('change', paint);
+})();
+
+(function () {
+  var side = document.querySelector('.toc-side');
+  if (!side) return;
+  var links = [].slice.call(side.querySelectorAll('a[href^="#"]'));
+  if (links.length < 3) return;
+  var map = {}, current = null;
+  links.forEach(function (a) { map[decodeURIComponent(a.hash.slice(1))] = a; });
+  var heads = [].slice.call(document.querySelectorAll('.post h1[id], .post h2[id], .post h3[id]'))
+    .filter(function (h) { return map[h.id]; });
+  if (!heads.length) return;
+  function onScroll() {
+    var found = heads[0];
+    for (var i = 0; i < heads.length; i++) {
+      if (heads[i].getBoundingClientRect().top <= 120) found = heads[i];
+    }
+    if (found === current) return;
+    if (current) current.classList.remove('active');
+    current = found;
+    var a = map[found.id];
+    if (a) a.classList.add('active');
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
+</body>
+</html>
